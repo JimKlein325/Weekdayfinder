@@ -14,7 +14,7 @@ namespace WeekdayFinder
 
     private int _baseDay = 1;
     private int _baseMonth = 1;
-    private int _baseYear = 2016;
+    private int _baseYear = 1;
 
     public Weekday(string newDate)
     {
@@ -35,21 +35,55 @@ namespace WeekdayFinder
 
     public int Calcualte()
     {
-      int leftDays = 0;
-      int[] months = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-      int[] leapYearMonths = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-      if(IsLeapYear(_year)){
-        for(int i=0; i< _month-1; i++){
-          leftDays += leapYearMonths[i];
-        }
+      int nthDay = 0;
+      if(_month != _baseMonth)
+      {
+
+        nthDay = 30 + _day;
       }
-      else{
-        for(int i=0; i< _month-1; i++){
-          leftDays += months[i];
+      else
+      {
+        nthDay = _day - 1;
+      }
+      if (DateIsMoreThanAYearAway())
+      {
+        for(int i = _baseYear ; i < _year; i++)
+        {
+          nthDay += CalculateDaysInYear (i);
         }
       }
 
-      return leftDays + _day;
+      int[] months = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+      int[] leapYearMonths = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+      if(IsLeapYear(_year)){
+        for(int i=_baseMonth; i< _month-1; i++){
+          nthDay += leapYearMonths[i];
+        }
+      }
+      else{
+        for(int i=_baseMonth; i< _month-1; i++){
+          nthDay += months[i];
+        }
+      }
+
+
+      return nthDay;
+    }
+    private bool DateIsMoreThanAYearAway()
+    {
+      if (_baseYear - _year < 0 || _baseYear - _year > 1)
+      {
+        return true;
+      }
+      else{
+        return false;
+      }
+    }
+
+    public int CalculateDaysInYear (int year)
+    {
+      if (IsLeapYear(year)) return 366;
+      return 365;
     }
 
     public bool IsLeapYear(int year)
@@ -70,7 +104,7 @@ namespace WeekdayFinder
 
     public string Find()
     {
-      string[] Weekdays = {"Friday", "Saturday", "Sunday", "Monday", "Tuesday", "Wednesday","Thursday"};
+      string[] Weekdays = { "Monday", "Tuesday", "Wednesday","Thursday","Friday", "Saturday", "Sunday"};
       return Weekdays[_numberOfDays%7];
     }
   }
